@@ -1,0 +1,87 @@
+<!-- app.html -->
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Riddle Generator</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>
+    :root { color-scheme: light dark; }
+    body { font-family: system-ui, sans-serif; margin: 0; background: #fafafa; color: #111; }
+    .wrap { max-width: 680px; margin: 40px auto; padding: 20px; }
+    .card { background: #fff; border: 1px solid #e5e7eb; border-radius: 12px; padding: 20px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.06); }
+    button { background: #111; color: #fff; border: none; padding: 10px 14px; border-radius: 8px; cursor: pointer; }
+    button:disabled { opacity: 0.5; cursor: not-allowed; }
+    .row { display: flex; gap: 10px; align-items: center; }
+    .muted { color: #6b7280; }
+    .answer { margin-top: 10px; font-weight: 600; }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <h1>Riddle generator</h1>
+    <p class="muted">Click “New riddle” and try to guess. Reveal the answer when you’re ready.</p>
+
+    <div class="card">
+      <div id="riddle">Press the button to generate a riddle.</div>
+      <div id="answer" class="answer" hidden></div>
+      <div class="row" style="margin-top:12px;">
+        <button id="newBtn">New riddle</button>
+        <button id="revealBtn" disabled>Reveal answer</button>
+        <button id="copyBtn" disabled>Copy</button>
+      </div>
+    </div>
+
+    <p style="margin-top:16px;"><a href="scratch.html">Back to scratch page</a></p>
+  </div>
+
+  <script>
+    const riddles = [
+      { q: "I speak without a mouth and hear without ears. I have no body, but I come alive with wind. What am I?", a: "An echo." },
+      { q: "What has keys but can’t open locks?", a: "A piano." },
+      { q: "The more of me there is, the less you see. What am I?", a: "Darkness." },
+      { q: "What gets wetter the more it dries?", a: "A towel." },
+      { q: "I have branches, but no fruit, trunk, or leaves. What am I?", a: "A bank." }
+    ];
+
+    const riddleEl = document.getElementById('riddle');
+    const answerEl = document.getElementById('answer');
+    const newBtn = document.getElementById('newBtn');
+    const revealBtn = document.getElementById('revealBtn');
+    const copyBtn = document.getElementById('copyBtn');
+
+    let current = null;
+
+    function newRiddle() {
+      current = riddles[Math.floor(Math.random() * riddles.length)];
+      riddleEl.textContent = current.q;
+      answerEl.textContent = current.a;
+      answerEl.hidden = true;
+      revealBtn.disabled = false;
+      copyBtn.disabled = false;
+    }
+
+    function reveal() {
+      if (!current) return;
+      answerEl.hidden = false;
+    }
+
+    async function copy() {
+      if (!current) return;
+      const text = `Riddle: ${current.q}\nAnswer: ${current.a}`;
+      try {
+        await navigator.clipboard.writeText(text);
+        copyBtn.textContent = "Copied!";
+        setTimeout(() => copyBtn.textContent = "Copy", 1200);
+      } catch (e) {
+        alert("Copy failed. You can select and copy manually.");
+      }
+    }
+
+    newBtn.addEventListener('click', newRiddle);
+    revealBtn.addEventListener('click', reveal);
+    copyBtn.addEventListener('click', copy);
+  </script>
+</body>
+</html>
